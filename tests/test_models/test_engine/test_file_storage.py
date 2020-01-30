@@ -19,6 +19,7 @@ import os
 import pep8
 import unittest
 FileStorage = file_storage.FileStorage
+test_storage = FileStorage()
 classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
 
@@ -70,6 +71,14 @@ test_file_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+    def setUp(self):
+        """Loads objects into storage."""
+        test_storage.reload()
+
+    def tearDown(self):
+        """Closes the current session."""
+        test_storage.close()
+
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_all_returns_dict(self):
         """Test that all returns the FileStorage.__objects attr"""
@@ -113,3 +122,22 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get(self):
+        """Test that get returns the correct object."""
+        state = State(name="Test State")
+        test_storage.new(state)
+        test_storage.save()
+        got = test_storage.get("State", state.id)
+        self.assertEqual(state.id, got.id)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count(self):
+        """Test that count returns the correct number of objects."""
+        expected = test_storage.count() + 1
+        state = State(name="Test State2")
+        test_storage.new(state)
+        test_storage.save()
+        got = test_storage.count()
+        self.assertEqual(expected, got)
