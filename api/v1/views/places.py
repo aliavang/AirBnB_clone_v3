@@ -99,12 +99,13 @@ def places_search():
                     if city.id not in city_ids:
                         city_ids.append(city.id)
     if "cities" in json_data:
-        places_copy = places.copy()
         city_ids.extend(json_data["cities"])
+    if len(city_ids) != 0:
+        places_copy = places.copy()
         for place in places_copy:
             if place.city_id not in city_ids:
                 places.remove(place)
-    if "amenities" in json_data:
+    if "amenities" in json_data and len(json_data["amenities"]) != 0:
         places_copy = places.copy()
         for place in places_copy:
             for amenity in place.amenities:
