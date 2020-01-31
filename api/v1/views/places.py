@@ -94,10 +94,8 @@ def places_search():
     if "states" in json_data:
         for state_id in json_data["states"]:
             state = storage.get("State", state_id)
-            print("STATE EXISTS?", state)
             if state:
                 for city in state.cities:
-                    print(city.id)
                     if city.id not in city_ids:
                         city_ids.append(city.id)
     if "cities" in json_data:
@@ -111,7 +109,6 @@ def places_search():
         for place in places_copy:
             for amenity in place.amenities:
                 if amenity.id not in json_data["amenities"]:
-                    print("PASSED IF!!")
                     places.remove(place)
                     break
     result = []
