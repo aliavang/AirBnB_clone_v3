@@ -114,6 +114,9 @@ def places_search():
     result = []
     for place in places:
         place_dict = place.to_dict()
-        del place_dict["amenities"]
+        if "amenities" in place_dict:
+            place_dict["amenities"] = [
+                amenity.to_dict() for amenity in place_dict["amenities"]
+            ]
         result.append(place_dict)
     return jsonify(result)
